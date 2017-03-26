@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>在线闹钟 online-clock</title>
+    <script src="js/broswer.min.js"></script>
+    <script src="js/react.min.js"></script>
+    <script src="js/react-dom.min.js"></script>
+</head>
+<body>
+<style>
+    /*background start*/
+    html, body {
+        background: black;
+    }
+    /*background end*/
+
+    /*content start*/
+    #clock {
+        width: 80%;
+        margin: 100px 10%;
+    }
+    /*content end*/
+
+    /*y-m-d start*/
+    .date {
+        font-size: 40px;
+        font-weight: 900;
+        display: inline-block;
+        width: 33.3%;
+        text-align: center;
+        text-shadow: 0 0 3px white;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    /*y-m-d end*/
+
+    /*h-m-s start*/
+    #timeBox {
+        width: 60%;
+        margin: 100px 20%;
+    }
+    .timeValue {
+        width: 60px;
+        height: 60px;
+        text-align: center;
+        line-height: 60px;
+        border: 12px solid black;
+        border-radius: 50%;
+    }
+    .time {
+        color: white;
+        width: 60px;
+        height: 60px;
+        margin: 0 calc(16.6% - 42px);
+        display: inline-block;
+    }
+    /*h-m-s end*/
+
+    /*round progress start*/
+    .round {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        transition: transform 1s;
+    }
+    .roundRight {
+        border: 12px solid black;
+        clip: rect(0,40px,100px,0);
+        z-index: 10;
+    }
+    .left2 {
+        z-index: 100;
+    }
+    .roundLeft {
+        width: 62px;
+        height: 62px;
+        margin: 1px;
+        border: 10px solid yellow;
+        clip: rect(0, 100px, 100px, 43px);
+        visibility: hidden;
+    }
+    /*round progress end*/
+
+    /*day of week start*/
+    .week {
+        color: white;
+        opacity: 0.2;
+        font-size: 40px;
+        text-align: center;
+    }
+    /*day of week end*/
+</style>
+<div id="clock"></div>
+</body>
+<script type="text/babel">
+    var day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    //年月日  year-month-day
+    var YMD = React.createClass({
+        render: function () {
+            return <div className="date">
+                {this.props.value}
+            </div>
+        }
+    });
+    //时间  hour-minute-second
+    var Time = React.createClass({
+        rotate: function () {
+            var r = this.props.p * 360 - 180;
+
+            r = (r>0)?0:r;
+
+            return {
+                transform: 'rotate(' + r + 'deg)',
+                visibility: 'visible',
+                borderColor: this.props.c
+            }
+        },
+        hidden: function () {
+            var h = 'hidden',
+                r = this.props.p * 360 - 180;
+            if (r > 0) {
+                h = 'visible';
+            }
+            return {
+                transform: 'rotate(' + r + 'deg)',
+                visibility: h,
+                borderColor: this.props.c
+            }
+        },
+        render: function () {
+            return <div className="time">
+                {/*visible when p bigger than 0.5*/}
+                <div className="roundLeft round left2" style={this.hidden()}></div>
+                {/*black border*/}
+                <div className="roundRight round"></div>
+                {/*round progress*/}
+                <div className="roundLeft round" style={this.rotate()}></div>
+                <div className="timeValue">{this.props.value}</div>
+            </div>
+        }
+    });
+
+    var Clock = React.createClass({
+        getInitialState: function () {
+            return {
+                Y : 0,
+                M : 0,
+                D : 0,
+                h : 0,
+                m : 0,
+                s : 0,
+                d : ''
+            }
+        },
+        componentWillMount: function () {
+            var d = new Date();
+            var _this = this;
+            setInterval(function () {
+                d = new Date;
+                _this.setState({
+                    Y : d.getFullYear(),
+                    M : d.getMonth() + 1,
+                    D : d.getDate( ),
+                    h : d.getHours(),
+                    m : d.getMinutes(),
+                    s : d.getSeconds(),
+                    d : day[d.getDay()]
+                })
+            }, 1000)
+        },
+        render: function () {
+            return <div>
+                {/*year*/}
+                <YMD value={this.state.Y} />
+                {/*Month*/}
+                <YMD value={this.state.M} />
+                {/*Date*/}
+                <YMD value={this.state.D} />
+
+                <div id="timeBox">
+                    {/*Hour*/}
+                    <Time value={this.state.h} p={this.state.h / 24} c="#f33" />
+                    {/*Minute*/}
+                    <Time value={this.state.m} p={this.state.m / 60} c="#33f"/>
+                    {/*Second*/}
+                    <Time value={this.state.s} p={this.state.s / 60} c="#3f3"/>
+                </div>
+                {/*day of week*/}
+                <div className="week">{this.state.d}</div>
+            </div>
+        }
+    });
+    ReactDOM.render(<Clock />, document.getElementById('clock'));
+</script>
+</html>

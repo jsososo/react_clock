@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>在线闹钟 online-clock</title>
+    <title>在线时钟 online-clock</title>
     <script src="js/broswer.min.js"></script>
     <script src="js/react.min.js"></script>
     <script src="js/react-dom.min.js"></script>
@@ -12,6 +12,10 @@
     /*background start*/
     html, body {
         background: black;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
     /*background end*/
 
@@ -30,10 +34,6 @@
         width: 33.3%;
         text-align: center;
         text-shadow: 0 0 3px white;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
     }
     /*y-m-d end*/
 
@@ -183,9 +183,9 @@
 
                 <div id="timeBox">
                     {/*Hour*/}
-                    <Time value={this.state.h} p={this.state.h / 24} c="#f33" />
+                    <Time value={this.state.h} p={(this.state.h % 12) / 12  + this.state.m / 60 / 12} c="#f33" />
                     {/*Minute*/}
-                    <Time value={this.state.m} p={this.state.m / 60} c="#33f"/>
+                    <Time value={this.state.m} p={this.state.m / 60 + this.state.s / 3600} c="#33f"/>
                     {/*Second*/}
                     <Time value={this.state.s} p={this.state.s / 60} c="#3f3"/>
                 </div>
